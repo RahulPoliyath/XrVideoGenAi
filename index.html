@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextVideo AI Pro - Create Professional Videos from Text</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="logo">
+                    <h2>🎬 TextVideo AI Pro</h2>
+                </div>
+                <nav class="nav">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#examples">Examples</a>
+                    <button class="btn btn--primary">Get Started</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero__content">
+                <h1 class="hero__title">Create Professional Videos from Text in Seconds</h1>
+                <p class="hero__subtitle">Transform your ideas into stunning YouTube shorts with AI-powered video generation. No editing skills required.</p>
+                <div class="hero__cta">
+                    <button class="btn btn--primary btn--lg" id="startGeneratingBtn">Start Creating Videos</button>
+                    <button class="btn btn--outline btn--lg">Watch Demo</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Generation Interface -->
+    <section class="generator" id="generator">
+        <div class="container">
+            <div class="generator__content">
+                <h2 class="generator__title">Create Your Video</h2>
+                <div class="generator__form">
+                    <div class="form-group">
+                        <label class="form-label" for="textInput">Enter your video script or description</label>
+                        <textarea id="textInput" class="form-control generator__textarea" placeholder="Describe the video you want to create or paste your script here. For example: 'Create an engaging video about the benefits of morning exercise with upbeat music and fitness visuals.'" rows="6"></textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span> / 2000 characters
+                        </div>
+                    </div>
+
+                    <div class="generator__options">
+                        <div class="form-group">
+                            <label class="form-label" for="categorySelect">Category</label>
+                            <select id="categorySelect" class="form-control">
+                                <option value="">Select category</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Education">Education</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Business">Business</option>
+                                <option value="Health">Health</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Food">Food</option>
+                                <option value="Sports">Sports</option>
+                                <option value="News">News</option>
+                                <option value="Comedy">Comedy</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="lengthSelect">Video Length</label>
+                            <select id="lengthSelect" class="form-control">
+                                <option value="">Select length</option>
+                                <option value="15 seconds">15 seconds</option>
+                                <option value="30 seconds">30 seconds</option>
+                                <option value="45 seconds">45 seconds</option>
+                                <option value="60 seconds">60 seconds</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="styleSelect">Video Style</label>
+                            <select id="styleSelect" class="form-control">
+                                <option value="">Select style</option>
+                                <option value="Cinematic">Cinematic</option>
+                                <option value="Documentary">Documentary</option>
+                                <option value="Cartoon/Animation">Cartoon/Animation</option>
+                                <option value="Realistic">Realistic</option>
+                                <option value="Minimalist">Minimalist</option>
+                                <option value="Vintage">Vintage</option>
+                                <option value="Modern">Modern</option>
+                                <option value="Artistic">Artistic</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="voiceSelect">Voice Over</label>
+                            <select id="voiceSelect" class="form-control">
+                                <option value="">Select voice</option>
+                                <option value="Sarah (Female, US)">Sarah (Female, US)</option>
+                                <option value="James (Male, UK)">James (Male, UK)</option>
+                                <option value="Emily (Female, AU)">Emily (Female, AU)</option>
+                                <option value="David (Male, US)">David (Male, US)</option>
+                                <option value="Lisa (Female, CA)">Lisa (Female, CA)</option>
+                                <option value="Michael (Male, IE)">Michael (Male, IE)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn--primary btn--lg btn--full-width generator__submit" id="generateBtn">
+                        Generate Video
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="features__header">
+                <h2 class="features__title">Powerful Features for Professional Videos</h2>
+                <p class="features__subtitle">Everything you need to create engaging short-form content</p>
+            </div>
+            <div class="features__grid">
+                <div class="feature-card">
+                    <div class="feature-card__icon">⏱️</div>
+                    <h3 class="feature-card__title">60-Second Shorts</h3>
+                    <p class="feature-card__description">Perfect for YouTube, TikTok, and Instagram</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">🎨</div>
+                    <h3 class="feature-card__title">Multiple Styles</h3>
+                    <p class="feature-card__description">Choose from cinematic to cartoon styles</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">🗣️</div>
+                    <h3 class="feature-card__title">AI Voices</h3>
+                    <p class="feature-card__description">Natural-sounding narration in multiple accents</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">🆓</div>
+                    <h3 class="feature-card__title">Free Generation</h3>
+                    <p class="feature-card__description">Create videos without hidden costs</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">📺</div>
+                    <h3 class="feature-card__title">HD Quality</h3>
+                    <p class="feature-card__description">Professional 1080p video output</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">⚡</div>
+                    <h3 class="feature-card__title">Fast Processing</h3>
+                    <p class="feature-card__description">Generate videos in under 2 minutes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="how-it-works__header">
+                <h2 class="how-it-works__title">How It Works</h2>
+                <p class="how-it-works__subtitle">Create professional videos in 4 simple steps</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step__number">1</div>
+                    <div class="step__content">
+                        <h3 class="step__title">Enter Your Text</h3>
+                        <p class="step__description">Type your script or describe the video you want</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step__number">2</div>
+                    <div class="step__content">
+                        <h3 class="step__title">Choose Preferences</h3>
+                        <p class="step__description">Select style, voice, length and category</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step__number">3</div>
+                    <div class="step__content">
+                        <h3 class="step__title">AI Generation</h3>
+                        <p class="step__description">Our AI creates your professional video</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step__number">4</div>
+                    <div class="step__content">
+                        <h3 class="step__title">Download & Share</h3>
+                        <p class="step__description">Get your MP4 file ready for any platform</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples Section -->
+    <section class="examples" id="examples">
+        <div class="container">
+            <div class="examples__header">
+                <h2 class="examples__title">Example Videos</h2>
+                <p class="examples__subtitle">See what our AI can create for different categories</p>
+            </div>
+            <div class="examples__grid">
+                <div class="example-card">
+                    <div class="example-card__video">
+                        <div class="video-placeholder">
+                            <div class="play-button">▶️</div>
+                        </div>
+                    </div>
+                    <div class="example-card__content">
+                        <h4>Tech Review Short</h4>
+                        <p>Technology • 45 seconds • Cinematic style</p>
+                    </div>
+                </div>
+                <div class="example-card">
+                    <div class="example-card__video">
+                        <div class="video-placeholder">
+                            <div class="play-button">▶️</div>
+                        </div>
+                    </div>
+                    <div class="example-card__content">
+                        <h4>Cooking Tutorial</h4>
+                        <p>Food • 60 seconds • Documentary style</p>
+                    </div>
+                </div>
+                <div class="example-card">
+                    <div class="example-card__video">
+                        <div class="video-placeholder">
+                            <div class="play-button">▶️</div>
+                        </div>
+                    </div>
+                    <div class="example-card__content">
+                        <h4>Fitness Motivation</h4>
+                        <p>Health • 30 seconds • Modern style</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__brand">
+                    <h3>🎬 TextVideo AI Pro</h3>
+                    <p>Create professional videos from text with AI</p>
+                </div>
+                <div class="footer__links">
+                    <div class="footer__section">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#how-it-works">How It Works</a>
+                        <a href="#examples">Examples</a>
+                    </div>
+                    <div class="footer__section">
+                        <h4>Support</h4>
+                        <a href="#" target="_blank">FAQ</a>
+                        <a href="#" target="_blank">Contact</a>
+                        <a href="#" target="_blank">Help Center</a>
+                    </div>
+                    <div class="footer__section">
+                        <h4>Legal</h4>
+                        <a href="#" target="_blank">Terms of Service</a>
+                        <a href="#" target="_blank">Privacy Policy</a>
+                        <a href="#" target="_blank">About</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2025 TextVideo AI Pro. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#" target="_blank">📘</a>
+                    <a href="#" target="_blank">🐦</a>
+                    <a href="#" target="_blank">📺</a>
+                    <a href="#" target="_blank">📷</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Video Generation Modal -->
+    <div class="modal hidden" id="videoModal">
+        <div class="modal__overlay"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3>Video Generated Successfully!</h3>
+                <button class="modal__close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal__body">
+                <div class="video-preview">
+                    <div class="video-preview__player">
+                        <div class="video-thumbnail">
+                            <div class="play-button">▶️</div>
+                            <div class="video-duration">45s</div>
+                        </div>
+                    </div>
+                    <div class="video-details">
+                        <p><strong>Style:</strong> <span id="modalStyle">Cinematic</span></p>
+                        <p><strong>Length:</strong> <span id="modalLength">45 seconds</span></p>
+                        <p><strong>Voice:</strong> <span id="modalVoice">Sarah (Female, US)</span></p>
+                        <p><strong>Category:</strong> <span id="modalCategory">Technology</span></p>
+                    </div>
+                </div>
+                <div class="modal__actions">
+                    <button class="btn btn--primary">Download MP4</button>
+                    <button class="btn btn--outline">Regenerate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Modal -->
+    <div class="modal hidden" id="processingModal">
+        <div class="modal__overlay"></div>
+        <div class="modal__content">
+            <div class="modal__body processing-modal">
+                <div class="processing-animation">
+                    <div class="processing-spinner"></div>
+                </div>
+                <h3>Generating Your Video...</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="processing-text" id="processingText">Analyzing your text...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
