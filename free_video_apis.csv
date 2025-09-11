@@ -1,0 +1,10 @@
+API/Service,Free Tier,Video Length,Quality,API Available,Best For
+Alibaba Qwen,Unlimited,5 seconds,720p,Yes (through Qwen chat),Testing/prototyping
+Hugging Face Inference API,Rate limited (free),Varies by model,Varies,Yes,Development/integration
+Replicate (pay-per-use),Pay per use (no subscription),Up to 10 seconds,Up to 1080p,Yes,Professional use
+Google Veo 3 (limited free),Limited free quota,8 seconds,720p/1080p,Yes (Google AI Studio),High quality videos
+Kling (166 free credits),166 credits/month,10 seconds,1080p,Limited,Cinematic videos
+Hailuo (100 daily credits),100 credits/day,10 seconds,1080p,Limited,Realistic storytelling
+Open Source Models (ComfyUI),Free (requires GPU),Varies,Up to 1080p,Local/Self-hosted,Full control/privacy
+Higgsfield (5 credits/day),5 credits daily,5 seconds,720p,Limited,User-friendly generation
+Vidu (10 credits/month),10 credits monthly,5 seconds,1080p,Limited,Stylized videos
