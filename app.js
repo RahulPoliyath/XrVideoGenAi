@@ -213,7 +213,7 @@ class VideoGenerator {
         this.currentVideoData = formData;
 
         try {
-            const runwayApiKey = "YOUR_RUNWAY_API_KEY"; // replace with your key
+            const runwayApiKey = "key_b3c4a75687c8b1a19dc5f434da4d6dc04027c2cd2830343f440d2c069e0bd4cd9af532c7b810114e3714fa6643bf24778cc135540b8193ac3fe309f9cf4b7fe0"; // replace with your key
             const model = "gen3_alpha"; // or gen4_turbo, etc.
 
             const response = await fetch("https://api.runwayml.com/v1/image_to_video", {
