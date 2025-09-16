@@ -1,622 +1,712 @@
-// VideoGen AI Application JavaScript
+// VidGen AI Application JavaScript
 
-class VideoGenApp {
+class VidGenApp {
     constructor() {
-        this.videoHistory = [];
-        this.currentVideoId = null;
-        this.processingSteps = [
-            {
-                step: 1,
-                name: "Analyzing Text",
-                description: "Processing your input and generating script segments",
-                duration: 3
-            },
-            {
-                step: 2,
-                name: "Generating Audio",
-                description: "Creating high-quality voice narration",
-                duration: 8
-            },
-            {
-                step: 3,
-                name: "Creating Slides",
-                description: "Designing visual slides with your chosen style",
-                duration: 5
-            },
-            {
-                step: 4,
-                name: "Adding Effects",
-                description: "Applying transitions and visual enhancements",
-                duration: 4
-            },
-            {
-                step: 5,
-                name: "Rendering Video",
-                description: "Compiling final video in high quality",
-                duration: 10
-            },
-            {
-                step: 6,
-                name: "Finalizing",
-                description: "Preparing your video for download",
-                duration: 2
-            }
+        this.currentPage = 'home';
+        this.isGenerating = false;
+        this.progressInterval = null;
+        this.currentStage = 1;
+        this.progress = 0;
+        
+        // Application data
+        this.progressStages = [
+            {id: 1, name: "Analyzing Text", description: "Processing your script and extracting key elements", duration: 15},
+            {id: 2, name: "Generating Audio", description: "Converting text to speech with selected voice", duration: 25}, 
+            {id: 3, name: "Creating Slideshow", description: "Building visual elements and transitions", duration: 35},
+            {id: 4, name: "Finalizing Video", description: "Rendering final video and optimizing quality", duration: 25}
         ];
         
         this.init();
     }
-
+    
     init() {
         this.setupEventListeners();
-        this.updateCharacterCount();
-        this.showSection('home');
+        this.setupTheme();
+        this.setupCharacterCounter();
+        this.setupFAQ();
+        this.loadPage('home');
     }
-
+    
     setupEventListeners() {
-        // Text input character counter
-        const textInput = document.getElementById('textInput');
-        if (textInput) {
-            textInput.addEventListener('input', () => this.updateCharacterCount());
-            textInput.addEventListener('blur', () => this.validateForm());
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
         }
-
-        // Generate button
-        const generateBtn = document.getElementById('generateBtn');
-        if (generateBtn) {
-            generateBtn.addEventListener('click', () => this.generateVideo());
+        
+        // Navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const page = e.target.getAttribute('data-page');
+                this.loadPage(page);
+            });
+        });
+        
+        // Video generation form
+        const videoForm = document.getElementById('videoForm');
+        if (videoForm) {
+            videoForm.addEventListener('submit', (e) => this.handleVideoGeneration(e));
         }
-
+        
+        // Cancel generation
+        const cancelBtn = document.getElementById('cancelGeneration');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => this.cancelGeneration());
+        }
+        
+        // New video button
+        const newVideoBtn = document.querySelector('.new-video-btn');
+        if (newVideoBtn) {
+            newVideoBtn.addEventListener('click', () => this.resetForm());
+        }
+        
         // Download button
-        const downloadBtn = document.getElementById('downloadBtn');
+        const downloadBtn = document.querySelector('.download-btn');
         if (downloadBtn) {
             downloadBtn.addEventListener('click', () => this.downloadVideo());
         }
-
-        // Navigation links
+        
+        // Share button
+        const shareBtn = document.querySelector('.share-btn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', () => this.shareVideo());
+        }
+        
+        // Example video play buttons
+        const playButtons = document.querySelectorAll('.play-button');
+        playButtons.forEach(button => {
+            button.addEventListener('click', (e) => this.playExampleVideo(e));
+        });
+    }
+    
+    setupTheme() {
+        // Load saved theme or default to light
+        const savedTheme = localStorage.getItem('vidgen-theme') || 'light';
+        this.setTheme(savedTheme);
+    }
+    
+    toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-color-scheme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        this.setTheme(newTheme);
+    }
+    
+    setTheme(theme) {
+        document.documentElement.setAttribute('data-color-scheme', theme);
+        localStorage.setItem('vidgen-theme', theme);
+        
+        // Update theme toggle icons
+        const sunIcon = document.querySelector('.sun-icon');
+        const moonIcon = document.querySelector('.moon-icon');
+        
+        if (theme === 'dark') {
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+        } else {
+            sunIcon.classList.remove('hidden');
+            moonIcon.classList.add('hidden');
+        }
+    }
+    
+    loadPage(pageId) {
+        // Update navigation
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = link.getAttribute('href').substring(1);
-                this.scrollToSection(target);
+            link.classList.remove('active');
+            if (link.getAttribute('data-page') === pageId) {
+                link.classList.add('active');
+            }
+        });
+        
+        // Update pages
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
+        
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) {
+            targetPage.classList.add('active');
+            this.currentPage = pageId;
+        }
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    setupCharacterCounter() {
+        const scriptText = document.getElementById('scriptText');
+        const charCount = document.getElementById('charCount');
+        
+        if (scriptText && charCount) {
+            scriptText.addEventListener('input', () => {
+                const count = scriptText.value.length;
+                charCount.textContent = count;
+                
+                // Update color based on character count
+                if (count > 450) {
+                    charCount.style.color = 'var(--color-warning)';
+                } else if (count > 400) {
+                    charCount.style.color = 'var(--color-info)';
+                } else {
+                    charCount.style.color = 'var(--color-text-secondary)';
+                }
+            });
+        }
+    }
+    
+    setupFAQ() {
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.closest('.faq-item');
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                }
             });
         });
-
-        // Hero buttons - Add direct event listeners
-        const createVideoButtons = document.querySelectorAll('button[onclick="showGenerator()"]');
-        createVideoButtons.forEach(button => {
-            button.addEventListener('click', () => this.showSection('generator'));
-        });
-
-        const learnMoreButtons = document.querySelectorAll('button[onclick="showFeatures()"]');
-        learnMoreButtons.forEach(button => {
-            button.addEventListener('click', () => this.scrollToSection('features'));
-        });
     }
-
-    updateCharacterCount() {
-        const textInput = document.getElementById('textInput');
-        const charCount = document.getElementById('charCount');
-        const counter = document.querySelector('.character-counter');
+    
+    handleVideoGeneration(e) {
+        e.preventDefault();
         
-        if (!textInput || !charCount) return;
-        
-        const length = textInput.value.length;
-        charCount.textContent = length;
-        
-        // Update counter styling based on length
-        if (counter) {
-            counter.classList.remove('warning', 'error');
-            if (length > 800) {
-                counter.classList.add('warning');
-            }
-            if (length >= 1000) {
-                counter.classList.add('error');
-            }
-        }
-        
-        this.validateForm();
-    }
-
-    validateForm() {
-        const textInput = document.getElementById('textInput');
-        const generateBtn = document.getElementById('generateBtn');
-        
-        if (!textInput || !generateBtn) return false;
-        
-        const isValid = textInput.value.trim().length > 0 && textInput.value.length <= 1000;
-        generateBtn.disabled = !isValid;
-        
-        if (!isValid && textInput.value.length > 1000) {
-            this.showNotification('Text must be 1000 characters or less', 'error');
-        }
-        
-        return isValid;
-    }
-
-    async generateVideo() {
-        if (!this.validateForm()) {
-            this.showNotification('Please enter valid text content', 'error');
+        if (this.isGenerating) {
             return;
         }
-
-        // Get form data
-        const formData = this.getFormData();
         
-        // Generate unique video ID
-        this.currentVideoId = 'video_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        
-        // Show progress section
-        this.showSection('progress');
-        
-        // Start generation process
-        await this.simulateVideoGeneration(formData);
-    }
-
-    getFormData() {
-        return {
-            text: document.getElementById('textInput')?.value || '',
-            duration: parseInt(document.getElementById('duration')?.value || '30'),
-            voice: document.getElementById('voice')?.value || 'female-natural',
-            template: document.getElementById('template')?.value || 'modern',
-            colorScheme: document.getElementById('colorScheme')?.value || 'blue-gradient',
-            font: document.getElementById('font')?.value || 'roboto',
-            speed: document.getElementById('speed')?.value || 'normal'
-        };
-    }
-
-    async simulateVideoGeneration(formData) {
-        const progressFill = document.getElementById('progressFill');
-        const progressPercent = document.getElementById('progressPercent');
-        const currentStep = document.getElementById('currentStep');
-        const stepDescription = document.getElementById('stepDescription');
-        const timeRemaining = document.getElementById('timeRemaining');
-        
-        if (!progressFill || !progressPercent) return;
-        
-        let totalProgress = 0;
-        const totalDuration = this.processingSteps.reduce((sum, step) => sum + step.duration, 0);
-        
-        for (let i = 0; i < this.processingSteps.length; i++) {
-            const step = this.processingSteps[i];
-            
-            // Update step info
-            if (currentStep) currentStep.textContent = step.name;
-            if (stepDescription) stepDescription.textContent = step.description;
-            
-            // Calculate remaining time
-            const remainingSteps = this.processingSteps.slice(i + 1);
-            const remainingTime = remainingSteps.reduce((sum, s) => sum + s.duration, 0);
-            if (timeRemaining) {
-                timeRemaining.textContent = remainingTime > 0 ? `${remainingTime} seconds` : 'Almost done...';
-            }
-            
-            // Simulate step progress
-            const stepStartProgress = totalProgress;
-            const stepEndProgress = totalProgress + (step.duration / totalDuration * 100);
-            
-            await this.animateProgress(stepStartProgress, stepEndProgress, step.duration * 1000);
-            
-            totalProgress = stepEndProgress;
+        // Validate form
+        const scriptText = document.getElementById('scriptText').value.trim();
+        if (!scriptText) {
+            this.showError('Please enter your script text');
+            return;
         }
         
-        // Complete generation
-        progressFill.style.width = '100%';
-        progressPercent.textContent = '100';
+        if (scriptText.length < 10) {
+            this.showError('Script must be at least 10 characters long');
+            return;
+        }
         
-        // Wait a moment then show results
-        setTimeout(() => {
-            this.showResults(formData);
+        this.startVideoGeneration();
+    }
+    
+    startVideoGeneration() {
+        this.isGenerating = true;
+        this.progress = 0;
+        this.currentStage = 1;
+        
+        // Hide form and show progress
+        this.showSection('progressSection');
+        
+        // Reset progress UI
+        this.updateProgressUI();
+        
+        // Start progress simulation
+        this.simulateProgress();
+    }
+    
+    simulateProgress() {
+        const totalDuration = this.progressStages.reduce((sum, stage) => sum + stage.duration, 0);
+        let elapsed = 0;
+        
+        this.progressInterval = setInterval(() => {
+            elapsed += 0.5; // Update every 500ms
+            this.progress = Math.min((elapsed / totalDuration) * 100, 100);
+            
+            // Update current stage based on progress
+            let stageProgress = 0;
+            for (let i = 0; i < this.progressStages.length; i++) {
+                const stage = this.progressStages[i];
+                stageProgress += stage.duration;
+                if (elapsed <= stageProgress) {
+                    if (this.currentStage !== stage.id) {
+                        this.currentStage = stage.id;
+                        this.updateStageUI();
+                    }
+                    break;
+                }
+            }
+            
+            this.updateProgressUI();
+            
+            // Complete generation
+            if (this.progress >= 100) {
+                this.completeGeneration();
+            }
         }, 500);
     }
-
-    async animateProgress(startPercent, endPercent, duration) {
-        return new Promise(resolve => {
-            const startTime = Date.now();
-            const progressFill = document.getElementById('progressFill');
-            const progressPercent = document.getElementById('progressPercent');
+    
+    updateProgressUI() {
+        const progressFill = document.querySelector('.progress-fill');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressStage = document.getElementById('progressStage');
+        const timeRemaining = document.getElementById('timeRemaining');
+        
+        if (progressFill) {
+            progressFill.style.width = `${this.progress}%`;
+        }
+        
+        if (progressPercent) {
+            progressPercent.textContent = `${Math.round(this.progress)}%`;
+        }
+        
+        if (progressStage && this.currentStage <= this.progressStages.length) {
+            const stage = this.progressStages[this.currentStage - 1];
+            progressStage.textContent = stage.name;
+        }
+        
+        if (timeRemaining) {
+            const remainingSeconds = Math.max(0, Math.round((100 - this.progress) * 3));
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
             
-            if (!progressFill || !progressPercent) {
-                resolve();
-                return;
+            if (minutes > 0) {
+                timeRemaining.textContent = `${minutes}m ${seconds}s remaining`;
+            } else {
+                timeRemaining.textContent = `${seconds}s remaining`;
             }
+        }
+    }
+    
+    updateStageUI() {
+        // Update stage indicators
+        document.querySelectorAll('.stage').forEach((stageEl, index) => {
+            const stageId = index + 1;
+            stageEl.classList.remove('active', 'completed');
             
-            const animate = () => {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                const currentPercent = startPercent + (endPercent - startPercent) * progress;
-                
-                progressFill.style.width = currentPercent + '%';
-                progressPercent.textContent = Math.round(currentPercent);
-                
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    resolve();
-                }
-            };
-            
-            animate();
+            if (stageId < this.currentStage) {
+                stageEl.classList.add('completed');
+            } else if (stageId === this.currentStage) {
+                stageEl.classList.add('active');
+            }
         });
     }
-
-    showResults(formData) {
-        // Generate video metadata
-        const videoData = {
-            id: this.currentVideoId,
-            text: formData.text,
-            duration: formData.duration,
-            voice: formData.voice,
-            template: formData.template,
-            colorScheme: formData.colorScheme,
-            font: formData.font,
-            speed: formData.speed,
-            createdAt: new Date(),
-            fileSize: this.calculateFileSize(formData.duration),
-            downloadUrl: `https://api.videogen.ai/download/${this.currentVideoId}.mp4`
-        };
+    
+    completeGeneration() {
+        clearInterval(this.progressInterval);
+        this.isGenerating = false;
         
-        // Add to history
-        this.videoHistory.unshift(videoData);
+        // Update final stage
+        document.querySelectorAll('.stage').forEach(stage => {
+            stage.classList.remove('active');
+            stage.classList.add('completed');
+        });
         
-        // Update results display
+        // Show success and results after a short delay
+        setTimeout(() => {
+            this.showResults();
+        }, 1000);
+    }
+    
+    showResults() {
+        this.hideSection('progressSection');
+        this.showSection('resultsSection');
+        
+        // Update video duration in results
+        const duration = document.getElementById('duration').value;
         const videoDuration = document.getElementById('videoDuration');
-        const videoSize = document.getElementById('videoSize');
-        
-        if (videoDuration) videoDuration.textContent = `${formData.duration}s`;
-        if (videoSize) videoSize.textContent = videoData.fileSize;
-        
-        // Show results section
-        this.showSection('results');
-        
-        // Update history display
-        this.updateHistoryDisplay();
-        
-        this.showNotification('Video generated successfully!', 'success');
-    }
-
-    calculateFileSize(duration) {
-        // Simulate realistic file sizes based on duration
-        const baseSizeKB = 1200; // Base size for 30s video
-        const sizeKB = baseSizeKB * (duration / 30);
-        
-        if (sizeKB < 1024) {
-            return `${Math.round(sizeKB)} KB`;
-        } else {
-            return `${(sizeKB / 1024).toFixed(1)} MB`;
-        }
-    }
-
-    updateHistoryDisplay() {
-        const historyContainer = document.getElementById('historyContainer');
-        if (!historyContainer) return;
-        
-        if (this.videoHistory.length === 0) {
-            historyContainer.innerHTML = `
-                <div class="empty-state">
-                    <p>No videos generated yet. Create your first video above!</p>
-                </div>
-            `;
-            return;
+        if (videoDuration) {
+            videoDuration.textContent = `${duration} seconds`;
         }
         
-        historyContainer.innerHTML = this.videoHistory.map(video => `
-            <div class="history-item">
-                <div class="history-preview">
-                    <div class="play-button">▶</div>
-                </div>
-                <div class="history-info">
-                    <h4>${this.truncateText(video.text, 50)}</h4>
-                    <div class="history-meta">
-                        ${video.duration}s • ${video.fileSize} • ${this.getVoiceName(video.voice)}
-                        <br>
-                        <small>${this.formatDate(video.createdAt)}</small>
-                    </div>
-                    <div class="history-actions">
-                        <button class="btn btn--sm btn--outline" onclick="app.downloadVideoById('${video.id}')">
-                            Download
-                        </button>
-                        <button class="btn btn--sm btn--secondary" onclick="app.shareVideoById('${video.id}')">
-                            Share
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    truncateText(text, maxLength) {
-        if (text.length <= maxLength) return text;
-        return text.substring(0, maxLength) + '...';
-    }
-
-    getVoiceName(voiceId) {
-        const voices = {
-            'female-natural': 'Sarah',
-            'male-professional': 'David',
-            'female-energetic': 'Emma',
-            'male-deep': 'James'
-        };
-        return voices[voiceId] || 'Unknown';
-    }
-
-    formatDate(date) {
-        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    }
-
-    downloadVideo() {
-        if (this.currentVideoId) {
-            this.downloadVideoById(this.currentVideoId);
-        }
-    }
-
-    downloadVideoById(videoId) {
-        // Simulate download
-        const video = this.videoHistory.find(v => v.id === videoId);
-        if (video) {
-            // Create a temporary link to simulate download
-            const link = document.createElement('a');
-            link.href = '#';
-            link.download = `videogen_${videoId}.mp4`;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            
-            this.showNotification('Download started! (Simulated)', 'success');
-            
-            // Clean up
-            setTimeout(() => {
-                document.body.removeChild(link);
-            }, 100);
-        }
-    }
-
-    shareVideo(platform) {
-        if (!this.currentVideoId) return;
-        
-        const video = this.videoHistory.find(v => v.id === this.currentVideoId);
-        if (!video) return;
-        
-        const shareText = `Check out my AI-generated video created with VideoGen AI!`;
-        const shareUrl = `https://videogen.ai/video/${this.currentVideoId}`;
-        
-        const shareUrls = {
-            twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
-            facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
-            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`
-        };
-        
-        if (shareUrls[platform]) {
-            window.open(shareUrls[platform], '_blank', 'width=600,height=400');
-        }
-    }
-
-    shareVideoById(videoId) {
-        this.currentVideoId = videoId;
-        this.shareVideo('twitter');
-    }
-
-    copyVideoLink() {
-        if (!this.currentVideoId) return;
-        
-        const shareUrl = `https://videogen.ai/video/${this.currentVideoId}`;
-        
-        // Use the modern clipboard API if available
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                this.showNotification('Link copied to clipboard!', 'success');
-            });
-        } else {
-            // Fallback for older browsers
-            const textArea = document.createElement('textarea');
-            textArea.value = shareUrl;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            this.showNotification('Link copied to clipboard!', 'success');
-        }
-    }
-
-    showSection(sectionId) {
-        // Hide all sections
-        const sections = ['home', 'generator', 'progress', 'results'];
-        sections.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                element.classList.add('hidden');
-            }
+        // Scroll to results
+        document.getElementById('resultsSection').scrollIntoView({ 
+            behavior: 'smooth' 
         });
-        
-        // Show target section
-        const targetSection = document.getElementById(sectionId);
-        if (targetSection) {
-            targetSection.classList.remove('hidden');
+    }
+    
+    cancelGeneration() {
+        if (this.progressInterval) {
+            clearInterval(this.progressInterval);
         }
         
-        // Scroll to top of section
-        if (sectionId !== 'home') {
-            setTimeout(() => {
-                if (targetSection) {
-                    targetSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            }, 100);
+        this.isGenerating = false;
+        this.hideSection('progressSection');
+        
+        // Scroll back to form
+        document.querySelector('.generation-form').scrollIntoView({ 
+            behavior: 'smooth' 
+        });
+    }
+    
+    resetForm() {
+        // Hide results section
+        this.hideSection('resultsSection');
+        
+        // Clear form
+        document.getElementById('scriptText').value = '';
+        document.getElementById('charCount').textContent = '0';
+        document.getElementById('duration').value = '60';
+        document.getElementById('voice').value = 'female_1';
+        
+        // Reset style selection
+        const modernRadio = document.querySelector('input[name="style"][value="modern"]');
+        if (modernRadio) {
+            modernRadio.checked = true;
+        }
+        
+        // Reset background music checkbox
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        if (backgroundMusic) {
+            backgroundMusic.checked = true;
+        }
+        
+        // Scroll to form
+        document.querySelector('.generation-form').scrollIntoView({ 
+            behavior: 'smooth' 
+        });
+    }
+    
+    downloadVideo() {
+        // Simulate download
+        const link = document.createElement('a');
+        link.href = '#';
+        link.download = 'vidgen-ai-video.mp4';
+        
+        // Show download started notification
+        this.showSuccess('Download started! Your video will be saved shortly.');
+        
+        // In a real implementation, this would trigger actual file download
+        console.log('Download initiated for generated video');
+    }
+    
+    shareVideo() {
+        // Simulate share functionality
+        if (navigator.share) {
+            navigator.share({
+                title: 'Check out my AI-generated video!',
+                text: 'I created this amazing video using VidGen AI',
+                url: window.location.href
+            }).catch(console.error);
+        } else {
+            // Fallback: copy link to clipboard
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                this.showSuccess('Link copied to clipboard!');
+            }).catch(() => {
+                this.showError('Unable to copy link');
+            });
         }
     }
-
-    scrollToSection(sectionId) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+    
+    playExampleVideo(e) {
+        e.preventDefault();
+        
+        // In a real implementation, this would open a video modal or player
+        const card = e.target.closest('.example-card');
+        const title = card.querySelector('h3').textContent;
+        
+        this.showInfo(`Playing example: ${title}`);
+        
+        // Simulate video loading
+        setTimeout(() => {
+            console.log(`Playing example video: ${title}`);
+        }, 1000);
+    }
+    
+    showSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.classList.remove('hidden');
+            section.classList.add('fade-in');
         }
     }
-
+    
+    hideSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.classList.add('hidden');
+            section.classList.remove('fade-in');
+        }
+    }
+    
     showNotification(message, type = 'info') {
         // Create notification element
         const notification = document.createElement('div');
         notification.className = `notification notification--${type}`;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 20px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-            max-width: 400px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            font-size: var(--font-size-sm);
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-message">${message}</span>
+                <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
         `;
         
-        // Set type-specific styles
-        if (type === 'success') {
-            notification.style.borderColor = 'var(--color-success)';
-            notification.style.color = 'var(--color-success)';
-        } else if (type === 'error') {
-            notification.style.borderColor = 'var(--color-error)';
-            notification.style.color = 'var(--color-error)';
+        // Add styles for notification
+        notification.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+        `;
+        
+        // Add notification-specific styling
+        if (type === 'error') {
+            notification.style.borderLeftColor = 'var(--color-error)';
+            notification.style.borderLeftWidth = '4px';
+        } else if (type === 'success') {
+            notification.style.borderLeftColor = 'var(--color-success)';
+            notification.style.borderLeftWidth = '4px';
+        } else if (type === 'warning') {
+            notification.style.borderLeftColor = 'var(--color-warning)';
+            notification.style.borderLeftWidth = '4px';
         }
         
-        notification.textContent = message;
         document.body.appendChild(notification);
         
-        // Animate in
+        // Auto remove after 5 seconds
         setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-        
-        // Auto remove after 4 seconds
-        setTimeout(() => {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, 4000);
-    }
-}
-
-// Initialize app when DOM is loaded
-let app;
-
-// Global functions for HTML onclick handlers - define early
-function showGenerator() {
-    if (app) {
-        app.showSection('generator');
-    }
-}
-
-function showFeatures() {
-    if (app) {
-        app.scrollToSection('features');
-    }
-}
-
-function shareVideo(platform) {
-    if (app) {
-        app.shareVideo(platform);
-    }
-}
-
-function copyVideoLink() {
-    if (app) {
-        app.copyVideoLink();
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    app = new VideoGenApp();
-    
-    // Add additional event listeners after app initialization
-    const heroCreateButton = document.querySelector('.hero .btn--primary');
-    const heroLearnButton = document.querySelector('.hero .btn--outline');
-    
-    if (heroCreateButton) {
-        heroCreateButton.addEventListener('click', () => app.showSection('generator'));
-    }
-    
-    if (heroLearnButton) {
-        heroLearnButton.addEventListener('click', () => app.scrollToSection('features'));
-    }
-
-    // Add hover effects to cards
-    const cards = document.querySelectorAll('.feature-card, .faq-item, .history-item');
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-    
-    // Add smooth scrolling for all internal links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            if (notification.parentElement) {
+                notification.remove();
             }
-        });
-    });
+        }, 5000);
+    }
     
-    // Add loading states to buttons
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('click', function() {
-            if (!this.disabled) {
-                this.style.opacity = '0.8';
-                setTimeout(() => {
-                    this.style.opacity = '1';
-                }, 200);
-            }
-        });
-    });
-});
+    showError(message) {
+        this.showNotification(message, 'error');
+    }
+    
+    showSuccess(message) {
+        this.showNotification(message, 'success');
+    }
+    
+    showWarning(message) {
+        this.showNotification(message, 'warning');
+    }
+    
+    showInfo(message) {
+        this.showNotification(message, 'info');
+    }
+}
 
-// Handle form auto-save (simulate user-friendly behavior)
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        const inputs = document.querySelectorAll('#textInput, #duration, #voice, #template, #colorScheme, #font, #speed');
+// Additional CSS for notifications (added dynamically)
+const notificationStyles = `
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-12);
+}
+
+.notification-message {
+    flex: 1;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.notification-close:hover {
+    background: var(--color-secondary);
+    color: var(--color-text);
+}
+`;
+
+// Add notification styles to document
+const styleSheet = document.createElement('style');
+styleSheet.textContent = notificationStyles;
+document.head.appendChild(styleSheet);
+
+// Enhanced form validation
+class FormValidator {
+    static validateScript(text) {
+        const errors = [];
         
-        inputs.forEach(input => {
-            if (input) {
-                input.addEventListener('change', () => {
-                    // Add subtle visual feedback
-                    input.style.borderColor = 'var(--color-success)';
-                    setTimeout(() => {
-                        input.style.borderColor = '';
-                    }, 1000);
-                });
-            }
-        });
-    }, 1000);
-});
-
-// Add keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-    if (!app) return;
+        if (!text || text.trim().length === 0) {
+            errors.push('Script text is required');
+        } else if (text.trim().length < 10) {
+            errors.push('Script must be at least 10 characters long');
+        } else if (text.length > 500) {
+            errors.push('Script must be less than 500 characters');
+        }
+        
+        // Check for potentially problematic content
+        const suspiciousWords = ['hack', 'virus', 'malware', 'spam'];
+        const lowerText = text.toLowerCase();
+        const foundSuspicious = suspiciousWords.filter(word => lowerText.includes(word));
+        
+        if (foundSuspicious.length > 0) {
+            errors.push('Content may contain inappropriate terms');
+        }
+        
+        return errors;
+    }
     
-    // Ctrl/Cmd + Enter to generate video
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        const generateBtn = document.getElementById('generateBtn');
-        if (generateBtn && !generateBtn.disabled && !document.getElementById('generator').classList.contains('hidden')) {
-            generateBtn.click();
+    static validateDuration(duration) {
+        const errors = [];
+        const dur = parseInt(duration);
+        
+        if (!dur || dur < 30 || dur > 300) {
+            errors.push('Duration must be between 30 and 300 seconds');
+        }
+        
+        return errors;
+    }
+}
+
+// WebSocket simulation for real-time updates
+class ProgressSimulator {
+    constructor(callback) {
+        this.callback = callback;
+        this.stages = [
+            { name: 'Analyzing Text', duration: 2000, progress: 0 },
+            { name: 'Generating Audio', duration: 3000, progress: 25 },
+            { name: 'Creating Slideshow', duration: 4000, progress: 60 },
+            { name: 'Finalizing Video', duration: 2000, progress: 90 }
+        ];
+        this.currentStageIndex = 0;
+        this.isRunning = false;
+    }
+    
+    start() {
+        if (this.isRunning) return;
+        
+        this.isRunning = true;
+        this.currentStageIndex = 0;
+        this.runStage();
+    }
+    
+    stop() {
+        this.isRunning = false;
+    }
+    
+    runStage() {
+        if (!this.isRunning || this.currentStageIndex >= this.stages.length) {
+            this.callback({ type: 'complete', progress: 100 });
+            return;
+        }
+        
+        const stage = this.stages[this.currentStageIndex];
+        
+        // Send stage start event
+        this.callback({
+            type: 'stage_start',
+            stage: stage.name,
+            progress: stage.progress
+        });
+        
+        // Simulate gradual progress within stage
+        const progressIncrement = (this.currentStageIndex < this.stages.length - 1 ? 
+            this.stages[this.currentStageIndex + 1].progress - stage.progress :
+            100 - stage.progress) / 10;
+        
+        let stageProgress = 0;
+        const stageInterval = setInterval(() => {
+            if (!this.isRunning) {
+                clearInterval(stageInterval);
+                return;
+            }
+            
+            stageProgress += progressIncrement;
+            const totalProgress = stage.progress + stageProgress;
+            
+            this.callback({
+                type: 'progress',
+                stage: stage.name,
+                progress: Math.min(totalProgress, 100)
+            });
+            
+            if (stageProgress >= progressIncrement * 10) {
+                clearInterval(stageInterval);
+                this.currentStageIndex++;
+                setTimeout(() => this.runStage(), 500);
+            }
+        }, stage.duration / 10);
+    }
+}
+
+// Performance monitoring
+class PerformanceMonitor {
+    static measurePageLoad() {
+        if (window.performance && window.performance.timing) {
+            const timing = window.performance.timing;
+            const loadTime = timing.loadEventEnd - timing.navigationStart;
+            console.log(`Page load time: ${loadTime}ms`);
+            
+            // Track if load time is slow
+            if (loadTime > 3000) {
+                console.warn('Slow page load detected');
+            }
         }
     }
     
-    // Escape to go back to generator from results
-    if (e.key === 'Escape') {
-        const resultsSection = document.getElementById('results');
-        if (resultsSection && !resultsSection.classList.contains('hidden')) {
-            app.showSection('generator');
-        }
+    static measureFunction(name, fn) {
+        const start = performance.now();
+        const result = fn();
+        const end = performance.now();
+        console.log(`${name} took ${end - start} milliseconds`);
+        return result;
+    }
+}
+
+// Initialize application when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Measure page load performance
+    PerformanceMonitor.measurePageLoad();
+    
+    // Initialize main application
+    window.vidgenApp = new VidGenApp();
+    
+    console.log('VidGen AI application initialized successfully');
+});
+
+// Handle window resize for responsive updates
+window.addEventListener('resize', () => {
+    // Add any responsive adjustments here
+    const navbar = document.querySelector('.navbar');
+    if (navbar && window.innerWidth <= 768) {
+        // Mobile responsive adjustments could go here
     }
 });
+
+// Handle page visibility changes
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && window.vidgenApp && window.vidgenApp.isGenerating) {
+        // Optionally pause generation when page is hidden
+        console.log('Page hidden during video generation');
+    }
+});
+
+// Service Worker registration for PWA capabilities (optional)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        // In a production app, you would register a service worker here
+        // navigator.serviceWorker.register('/sw.js');
+    });
+}
