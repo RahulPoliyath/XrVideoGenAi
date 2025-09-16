@@ -26,4 +26,4 @@ RUN mkdir -p generated_videos temp static
 EXPOSE 8000
 
 # Run the application
-CMD ["uvicorn", "vidgen_backend:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "vidgen_backend:app", "--host", "0.0.0.0", "--port", "$PORT"]
