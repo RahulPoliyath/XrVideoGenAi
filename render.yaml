@@ -2,7 +2,7 @@ services:
    type: web
     name: vidgen-ai-backend
     env: python
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: "pip install –upgrade pip setuptools wheel && pip install -r requirements.txt"
     startCommand: "uvicorn vidgen_backend:app --host 0.0.0.0 --port $PORT"
     plan: free
     envVars:
