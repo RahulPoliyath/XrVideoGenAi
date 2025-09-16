@@ -1,10 +1,12 @@
 services:
   - type: web
-    name: videogen-api
+    name: vidgen-ai-backend
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    startCommand: "uvicorn vidgen_backend:app --host 0.0.0.0 --port $PORT"
+    plan: free
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11
-    healthCheckPath: /api/health
+        value: "3.11.0"
+      - key: ENVIRONMENT
+        value: "production"
