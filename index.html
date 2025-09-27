@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI TalkingPhoto - Professional AI Video Generation Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <div class="nav-brand">
+                <h2 class="brand-logo">AI TalkingPhoto</h2>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#about" class="nav-link">About</a>
+                <div class="nav-auth">
+                    <button class="btn btn--outline btn--sm" id="loginBtn">Sign In</button>
+                    <button class="btn btn--primary btn--sm" id="signupBtn">Get Started</button>
+                </div>
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Landing Page -->
+        <section id="home" class="page-section active">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <h1 class="hero-title">
+                            Transform Any Photo Into 
+                            <span class="gradient-text">AI Talking Videos</span>
+                        </h1>
+                        <p class="hero-description">
+                            Create stunning AI-powered talking photos, avatars, and lip-sync animations in minutes. 
+                            Professional quality video generation with advanced AI technology.
+                        </p>
+                        <div class="hero-actions">
+                            <button class="btn btn--primary btn--lg" id="heroStartBtn">Start Creating Free</button>
+                            <button class="btn btn--outline btn--lg" id="heroDemoBtn">Watch Demo</button>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">500K+</span>
+                                <span class="stat-label">Videos Created</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">25+</span>
+                                <span class="stat-label">Languages</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">50+</span>
+                                <span class="stat-label">AI Voices</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Demo Section -->
+            <section class="demo-section">
+                <div class="container">
+                    <h2>See AI TalkingPhoto in Action</h2>
+                    <div class="demo-grid" id="demoGrid">
+                        <!-- Demo videos will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="features-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Powerful AI Video Generation Features</h2>
+                        <p>Everything you need to create professional AI talking videos</p>
+                    </div>
+                    <div class="features-grid" id="featuresGrid">
+                        <!-- Features will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pricing Section -->
+            <section id="pricing" class="pricing-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Choose Your Plan</h2>
+                        <p>Start free and upgrade as you grow</p>
+                    </div>
+                    <div class="pricing-grid" id="pricingGrid">
+                        <!-- Pricing cards will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <section class="testimonials-section">
+                <div class="container">
+                    <h2>What Our Users Say</h2>
+                    <div class="testimonials-grid" id="testimonialsGrid">
+                        <!-- Testimonials will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="cta-section">
+                <div class="container">
+                    <div class="cta-content">
+                        <h2>Ready to Create Amazing AI Videos?</h2>
+                        <p>Join thousands of creators and businesses using AI TalkingPhoto</p>
+                        <button class="btn btn--primary btn--lg" id="ctaBtn">Get Started Now</button>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Dashboard Page -->
+        <section id="dashboard" class="page-section">
+            <div class="dashboard-container">
+                <div class="dashboard-sidebar">
+                    <div class="sidebar-header">
+                        <h3>Dashboard</h3>
+                    </div>
+                    <nav class="sidebar-nav">
+                        <a href="#" class="sidebar-link active" data-tab="overview">
+                            <span class="sidebar-icon">📊</span>
+                            Overview
+                        </a>
+                        <a href="#" class="sidebar-link" data-tab="studio">
+                            <span class="sidebar-icon">🎬</span>
+                            AI Studio
+                        </a>
+                        <a href="#" class="sidebar-link" data-tab="gallery">
+                            <span class="sidebar-icon">🖼️</span>
+                            My Gallery
+                        </a>
+                        <a href="#" class="sidebar-link" data-tab="account">
+                            <span class="sidebar-icon">⚙️</span>
+                            Account
+                        </a>
+                        <a href="#" class="sidebar-link" id="logoutBtn">
+                            <span class="sidebar-icon">🚪</span>
+                            Logout
+                        </a>
+                    </nav>
+                </div>
+
+                <div class="dashboard-main">
+                    <!-- Overview Tab -->
+                    <div class="dashboard-tab active" id="overview-tab">
+                        <div class="dashboard-header">
+                            <h1>Welcome back!</h1>
+                            <p>Here's what's happening with your account</p>
+                        </div>
+
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">🎬</div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="videosGenerated">23</span>
+                                    <span class="stat-label">Videos Generated</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="monthlyUsage">23/50</span>
+                                    <span class="stat-label">Monthly Usage</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">💾</div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="storageUsed">2.4 GB</span>
+                                    <span class="stat-label">Storage Used</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-sections">
+                            <div class="section-card">
+                                <h3>Recent Generations</h3>
+                                <div class="recent-list" id="recentList">
+                                    <!-- Recent generations will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <div class="section-card">
+                                <h3>Quick Actions</h3>
+                                <div class="quick-actions">
+                                    <button class="action-btn" data-action="studio">
+                                        <span class="action-icon">🎬</span>
+                                        <span>Create New Video</span>
+                                    </button>
+                                    <button class="action-btn" data-action="gallery">
+                                        <span class="action-icon">🖼️</span>
+                                        <span>View Gallery</span>
+                                    </button>
+                                    <button class="action-btn" data-action="upgrade">
+                                        <span class="action-icon">⭐</span>
+                                        <span>Upgrade Plan</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Studio Tab -->
+                    <div class="dashboard-tab" id="studio-tab">
+                        <div class="studio-container">
+                            <div class="studio-header">
+                                <h1>AI Video Studio</h1>
+                                <p>Create amazing talking photos and avatars</p>
+                            </div>
+
+                            <div class="studio-workspace">
+                                <div class="studio-left">
+                                    <div class="upload-section">
+                                        <h3>Upload Photo</h3>
+                                        <div class="upload-area" id="photoUpload">
+                                            <div class="upload-placeholder">
+                                                <span class="upload-icon">📷</span>
+                                                <p>Drop your photo here or <span class="upload-link">browse</span></p>
+                                                <small>Supports JPG, PNG, WebP • Max 10MB</small>
+                                            </div>
+                                            <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                                        </div>
+                                    </div>
+
+                                    <div class="input-section">
+                                        <h3>Content Input</h3>
+                                        <div class="input-tabs">
+                                            <button class="input-tab active" data-input="text">Text</button>
+                                            <button class="input-tab" data-input="audio">Audio</button>
+                                        </div>
+                                        
+                                        <div class="input-content">
+                                            <div class="input-panel active" id="text-panel">
+                                                <textarea class="form-control" id="textInput" placeholder="Enter the text you want your photo to say..." rows="4"></textarea>
+                                                <div class="voice-selection">
+                                                    <label class="form-label">Select Voice</label>
+                                                    <select class="form-control" id="voiceSelect">
+                                                        <!-- Voice options populated by JavaScript -->
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="input-panel" id="audio-panel">
+                                                <div class="audio-upload">
+                                                    <input type="file" id="audioInput" accept="audio/*">
+                                                    <label for="audioInput" class="audio-upload-btn">
+                                                        <span>🎤</span>
+                                                        Upload Audio File
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="studio-right">
+                                    <div class="settings-section">
+                                        <h3>Generation Settings</h3>
+                                        
+                                        <div class="setting-group">
+                                            <label class="form-label">AI Model</label>
+                                            <select class="form-control" id="aiModelSelect">
+                                                <!-- AI models populated by JavaScript -->
+                                            </select>
+                                        </div>
+
+                                        <div class="setting-group">
+                                            <label class="form-label">Output Resolution</label>
+                                            <select class="form-control" id="resolutionSelect">
+                                                <!-- Resolutions populated by JavaScript -->
+                                            </select>
+                                        </div>
+
+                                        <div class="setting-group">
+                                            <label class="form-label">Video Duration</label>
+                                            <input type="range" class="duration-slider" id="durationSlider" min="5" max="120" value="30">
+                                            <span class="duration-display" id="durationDisplay">30s</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="preview-section">
+                                        <h3>Preview</h3>
+                                        <div class="preview-area" id="previewArea">
+                                            <div class="preview-placeholder">
+                                                <span>👁️</span>
+                                                <p>Upload photo to see preview</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="generate-section">
+                                        <button class="btn btn--primary btn--full-width btn--lg" id="generateBtn" disabled>
+                                            Generate AI Video
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Tab -->
+                    <div class="dashboard-tab" id="gallery-tab">
+                        <div class="gallery-header">
+                            <h1>My Gallery</h1>
+                            <div class="gallery-controls">
+                                <div class="gallery-filters">
+                                    <select class="form-control" id="sortFilter">
+                                        <option value="date">Sort by Date</option>
+                                        <option value="name">Sort by Name</option>
+                                        <option value="duration">Sort by Duration</option>
+                                    </select>
+                                </div>
+                                <div class="view-controls">
+                                    <button class="view-btn active" data-view="grid">⊞</button>
+                                    <button class="view-btn" data-view="list">☰</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="gallery-grid" id="galleryGrid">
+                            <!-- Gallery items populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Account Tab -->
+                    <div class="dashboard-tab" id="account-tab">
+                        <div class="account-header">
+                            <h1>Account Settings</h1>
+                            <p>Manage your profile and preferences</p>
+                        </div>
+
+                        <div class="account-sections">
+                            <div class="account-card">
+                                <h3>Profile Information</h3>
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" value="John Doe" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" value="john.doe@example.com" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Member Since</label>
+                                    <input type="text" class="form-control" value="September 2025" readonly>
+                                </div>
+                            </div>
+
+                            <div class="account-card">
+                                <h3>Current Plan</h3>
+                                <div class="plan-info">
+                                    <div class="plan-details">
+                                        <span class="plan-name">Basic Plan</span>
+                                        <span class="plan-price">$19/month</span>
+                                    </div>
+                                    <div class="plan-features">
+                                        <ul>
+                                            <li>50 videos per month</li>
+                                            <li>All AI models</li>
+                                            <li>No watermark</li>
+                                            <li>Up to 1080p resolution</li>
+                                        </ul>
+                                    </div>
+                                    <button class="btn btn--primary">Upgrade Plan</button>
+                                </div>
+                            </div>
+
+                            <div class="account-card">
+                                <h3>Usage Analytics</h3>
+                                <div class="usage-charts">
+                                    <div class="usage-item">
+                                        <span class="usage-label">Videos This Month</span>
+                                        <div class="usage-bar">
+                                            <div class="usage-fill" style="width: 46%"></div>
+                                        </div>
+                                        <span class="usage-value">23/50</span>
+                                    </div>
+                                    <div class="usage-item">
+                                        <span class="usage-label">Storage Used</span>
+                                        <div class="usage-bar">
+                                            <div class="usage-fill" style="width: 24%"></div>
+                                        </div>
+                                        <span class="usage-value">2.4/10 GB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <!-- Login Modal -->
+    <div class="modal hidden" id="loginModal">
+        <div class="modal-overlay" id="loginOverlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign In</h2>
+                <button class="modal-close" id="loginClose">&times;</button>
+            </div>
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full-width">Sign In</button>
+                <p class="auth-switch">
+                    Don't have an account? <a href="#" id="switchToSignup">Sign up</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal hidden" id="signupModal">
+        <div class="modal-overlay" id="signupOverlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Account</h2>
+                <button class="modal-close" id="signupClose">&times;</button>
+            </div>
+            <form class="auth-form" id="signupForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="signupName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="signupPassword" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full-width">Create Account</button>
+                <p class="auth-switch">
+                    Already have an account? <a href="#" id="switchToLogin">Sign in</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Generation Progress Modal -->
+    <div class="modal hidden" id="progressModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Generating Your AI Video</h2>
+            </div>
+            <div class="progress-content">
+                <div class="progress-animation">
+                    <div class="progress-circle"></div>
+                </div>
+                <p class="progress-text" id="progressText">Initializing AI models...</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="progress-percentage" id="progressPercentage">0%</p>
+                <div class="progress-steps">
+                    <div class="step active">📷 Processing Photo</div>
+                    <div class="step">🗣️ Analyzing Speech</div>
+                    <div class="step">🎬 Generating Video</div>
+                    <div class="step">✅ Finalizing</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-grid" id="faqGrid">
+                <!-- FAQ items populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>AI TalkingPhoto</h3>
+                    <p>Professional AI video generation platform</p>
+                </div>
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Product</h4>
+                        <a href="#">Features</a>
+                        <a href="#">Pricing</a>
+                        <a href="#">API</a>
+                        <a href="#">Documentation</a>
+                    </div>
+                    <div class="link-group">
+                        <h4>Company</h4>
+                        <a href="#">About</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="link-group">
+                        <h4>Support</h4>
+                        <a href="#">Help Center</a>
+                        <a href="#">Community</a>
+                        <a href="#">Status</a>
+                        <a href="#">Privacy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AI TalkingPhoto. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
